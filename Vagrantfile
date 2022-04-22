@@ -12,6 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
+
   config.vm.box = "ubuntu/bionic64"
   
   config.vm.provider "virtualbox" do |vb| 
@@ -22,7 +23,7 @@ Vagrant.configure("2") do |config|
   # Máquina Virtual WordPress
   config.vm.define "wordpress" do |wordpress|
     # Network
-    wordpress.vm.network "public_network", ip: "192.168.0.21"
+    wordpress.vm.network "public_network", ip: "192.168.0.21", bridge: "Intel(R) Dual Band Wireless-AC 8265"
 
     # Provider
     wordpress.vm.provider "virtualbox" do |vb|
@@ -37,7 +38,7 @@ Vagrant.configure("2") do |config|
   # Máquina Virtual Ansible
   config.vm.define "ansible" do |ansible|
     # Network
-    ansible.vm.network "public_network", ip: "192.168.0.20"
+    ansible.vm.network "public_network", ip: "192.168.0.20", bridge: "Intel(R) Dual Band Wireless-AC 8265"
 
     # Provider
     ansible.vm.provider "virtualbox" do |vb|

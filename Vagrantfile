@@ -24,6 +24,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "wordpress" do |wordpress|
     # Network
     wordpress.vm.network "public_network", ip: "192.168.0.21", bridge: "Intel(R) Dual Band Wireless-AC 8265"
+    wordpress.vm.network "forwarded_port", guest: 80, host: 8585
+                          
 
     # Provider
     wordpress.vm.provider "virtualbox" do |vb|

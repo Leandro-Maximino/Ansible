@@ -23,8 +23,8 @@ Vagrant.configure("2") do |config|
   # Máquina Virtual WordPress
   config.vm.define "wordpress" do |wordpress|
     # Network
-    wordpress.vm.network "forwarded_port", guest: 8585, host: 8585
     wordpress.vm.network "public_network", ip: "192.168.0.21", bridge: "Intel(R) Dual Band Wireless-AC 8265"
+    wordpress.vm.network "forwarded_port", guest: 80, host: 8585
                           
 
     # Provider
@@ -55,7 +55,6 @@ Vagrant.configure("2") do |config|
             chown vagrant:vagrant /home/vagrant/id_ansible"
 
     ansible.vm.provision "shell", inline: $install_ansible
-    ansible.vm.provision "shell", inline: "ansible-playbook -i /vagrant/configs/ansible/hosts /vagrant/configs/ansible/provisioning.yml"
 
   end
 

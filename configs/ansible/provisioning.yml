@@ -1,62 +1,21 @@
 ---
 - hosts: all
-  handlers:
-    - name: restart mysql
-      service:
-        name: mysql
-        state: restarted
-      become: yes
-
   tasks:
-    - name: 'Instala pacotes de dependencia do SO'
-      apt:
-        update_cache: yes
-        cache_valid_time: 7200 #2 hours
-        name: "{{ item }}"
+    - name: 'Instala o PHP7.2'
+      apt: 
+        name: php7.2
         state: latest
       become: yes
-      loop:
-        - php7.2
-        - apache2
-        - libapache2-mod-php7.2
-        - php7.2-gd
-        - mysql-server-5.7
-        - python3-mysqldb
-        - php7.2-mysql
-
-    # - name: 'Mudando porta PHP e target arquivo .php'
-    #   composer:
-    #     arguments: -S 0.0.0.0:8585 -t /vagrant/src
-
-    #     # shell: /usr/bin/php -S 0.0.0.0:8585 -t /vagrant/src &
-    #   become: yes
-
-    - name: 'Cria uma database no MySQL'
-      mysql_db:
-        name: wordpress_db
-        login_user: root        
-        state: present
+      
+    - name: 'Instala o Apache'
+      apt:
+        name: apache2
+        state: latest
       become: yes
 
-    - name: 'Criar usuario no MySQL'
-      mysql_user:
-        login_user: root
-        name: phpuser
-        password: pass
-        priv: 'wordpress_db.*:ALL'
-        host: '%'
-        state: present
+    - name: 'Instala o modphp'
+      apt:
+        name: libapache2-mod-php7.2
+        state: latest
       become: yes
-
-    - name: 'Copiando arquivo mysqld.cnf'
-      copy:
-        src: /vagrant/configs/mysqld.cnf
-        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
-        owner: root
-        group: root
-        mode: 0644
-      become: yes
-
-      notify:
-        - restart mysql
 

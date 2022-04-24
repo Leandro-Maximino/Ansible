@@ -5,7 +5,7 @@
       service:
         name: mysql
         state: restarted
-      become: yes
+      become: yes    
 
   tasks:
     - name: 'Instala pacotes de dependencia do SO'
@@ -23,13 +23,6 @@
         - mysql-server-5.7
         - python3-mysqldb
         - php7.2-mysql
-
-    # - name: 'Mudando porta PHP e target arquivo .php'
-    #   composer:
-    #     arguments: -S 0.0.0.0:8585 -t /vagrant/src
-
-    #     # shell: /usr/bin/php -S 0.0.0.0:8585 -t /vagrant/src &
-    #   become: yes
 
     - name: 'Cria uma database no MySQL'
       mysql_db:
@@ -55,6 +48,37 @@
         owner: root
         group: root
         mode: 0644
+      become: yes
+
+    - name: 'Download Arquivo Wordpress'
+      get_url:
+        url: 'https://wordpress.org/latest.tar.gz'
+        dest: /tmp/wordpress.tar.gz      
+      become: yes
+
+    - name: 'Descompacta o Wordpress'        
+      unarchive:
+        src: /tmp/wordpress.tar.gz
+        dest: /var/www/
+        remote_src: yes
+      become: yes
+
+    - name: 'Copiando arquivo de configuracao wordpress'
+      copy:
+        src: /var/www/wordpress/wp-config-sample.php
+        dest: /var/www/wordpress/wp-config.php
+        remote_src: yes
+      become: yes
+
+    - name: 'Configura o wp-config com as entradas do banco de dados'
+      replace:
+        path: '/var/www/wordpress/wp-config.php'
+        regexp: "{{ item.regex }}"
+        replace: "{{ item.value }}"        
+      loop:
+        - { regex: 'database_name_here', value: 'wordpress_db'}
+        - { regex: 'username_here', value: 'phpuser'}
+        - { regex: 'password_here', value: 'pass'}
       become: yes
 
       notify:

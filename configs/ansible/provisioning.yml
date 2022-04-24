@@ -7,6 +7,12 @@
         state: restarted
       become: yes    
 
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted
+      become: yes
+
   tasks:
     - name: 'Instala pacotes de dependencia do SO'
       apt:
@@ -48,10 +54,10 @@
         owner: root
         group: root
         mode: 0644
-      become: yes
+      become: yes             
 
     - name: 'Download Arquivo Wordpress'
-      get_url:
+      ansible.builtin.get_url:
         url: 'https://wordpress.org/latest.tar.gz'
         dest: /tmp/wordpress.tar.gz      
       become: yes
@@ -81,6 +87,13 @@
         - { regex: 'password_here', value: 'pass'}
       become: yes
 
-      notify:
-        - restart mysql
+    - name: 'Configura apache para servir wordpress'
+      copy:
+        src: /vagrant/configs/000-default.conf
+        dest: /etc/apache2/sites-available/000-default.conf
+      become: yes
+
+      notify: 
+        - restart mysql       
+        - restart apache
 

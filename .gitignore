@@ -1,6 +1,6 @@
 private_key
 id_ansible
-/.vagrant/machines
+**/.vagrant/machines/*/
 /ssh-keys
 *.log
 *.pub

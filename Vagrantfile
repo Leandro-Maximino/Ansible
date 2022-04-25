@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
     end
 
     # Provision            
-    wmysqlordpress.vm.provision "shell", inline: $copy_public_key
+    mysql.vm.provision "shell", inline: $copy_public_key
     
   end  
 

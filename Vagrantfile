@@ -5,6 +5,12 @@ $install_ansible = <<-SCRIPT
   apt-get install -y ansible
 SCRIPT
 
+# Copia chave publica pra máquina
+$copy_public_key = <<-SCRIPT
+  grep -qxf /vagrant/configs/ssh-keys/id_ansible.pub .ssh/authorized_keys || \
+  cat /vagrant/configs/ssh-keys/id_ansible.pub >> .ssh/authorized_keys
+SCRIPT
+
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -32,10 +38,24 @@ Vagrant.configure("2") do |config|
       vb.name = "ubuntu_curso_ansible_wordpress"
     end
 
-    # Provision        
-    wordpress.vm.provision "shell", inline: "cat /vagrant/configs/ssh-keys/id_ansible.pub >> .ssh/authorized_keys" 
-    
+    # Provision            
+    wordpress.vm.provision "shell", inline: $copy_public_key    
   end
+
+  config.vm.define "mysql" do |mysql|
+    # Network
+    # mysql.vm.network "forwarded_port", guest: 8989, host: 8989
+    mysql.vm.network "public_network", ip: "192.168.0.22", bridge: "Intel(R) Dual Band Wireless-AC 8265"
+
+    # Provider
+    mysql.vm.provider "virtualbox" do |vb|
+      vb.name = "ubuntu_curso_ansible_mysql"
+    end
+
+    # Provision            
+    wmysqlordpress.vm.provision "shell", inline: $copy_public_key
+    
+  end  
 
   # Máquina Virtual Ansible
   config.vm.define "ansible" do |ansible|

@@ -1,20 +1,13 @@
 ---
-- hosts: all
-  handlers:
+- hosts: database
+    handlers:
     - name: restart mysql
       service:
         name: mysql
         state: restarted
-      become: yes    
+      become: yes  
 
-    - name: restart apache
-      service:
-        name: apache2
-        state: restarted
-      become: yes
-
-  tasks:
-    - name: 'Instala pacotes de dependencia do SO'
+    - name: 'Instala pacotes de dependencia do MySQL'
       apt:
         update_cache: yes
         cache_valid_time: 7200 #2 hours
@@ -22,13 +15,8 @@
         state: latest
       become: yes
       loop:
-        - php7.2
-        - apache2
-        - libapache2-mod-php7.2
-        - php7.2-gd
         - mysql-server-5.7
         - python3-mysqldb
-        - php7.2-mysql
 
     - name: 'Cria uma database no MySQL'
       mysql_db:
@@ -40,7 +28,7 @@
     - name: 'Criar usuario no MySQL'
       mysql_user:
         login_user: root
-        name: phpuser
+        name: wordpressuser
         password: pass
         priv: 'wordpress_db.*:ALL'
         host: '%'
@@ -54,7 +42,33 @@
         owner: root
         group: root
         mode: 0644
-      become: yes             
+      become: yes  
+
+      notify: 
+        - restart mysql 
+        
+- hosts: wordpress
+    handlers:
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted
+      become: yes
+
+  tasks:
+    - name: 'Instala pacotes de dependencia do PHP+Apache'
+      apt:
+        update_cache: yes
+        cache_valid_time: 7200 #2 hours
+        name: "{{ item }}"
+        state: latest
+      become: yes
+      loop:
+        - php7.2
+        - apache2
+        - libapache2-mod-php7.2
+        - php7.2-gd
+        - php7.2-mysql               
 
     - name: 'Download Arquivo Wordpress'
       ansible.builtin.get_url:
@@ -83,7 +97,7 @@
         replace: "{{ item.value }}"        
       loop:
         - { regex: 'database_name_here', value: 'wordpress_db'}
-        - { regex: 'username_here', value: 'phpuser'}
+        - { regex: 'username_here', value: 'wordpressuser'}
         - { regex: 'password_here', value: 'pass'}
       become: yes
 
@@ -93,7 +107,6 @@
         dest: /etc/apache2/sites-available/000-default.conf
       become: yes
 
-      notify: 
-        - restart mysql       
+      notify:              
         - restart apache
 

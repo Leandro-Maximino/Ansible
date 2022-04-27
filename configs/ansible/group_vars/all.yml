@@ -1,0 +1,6 @@
+---
+wp_db_name: wordpress_db
+wp_username: wordpressuser
+wp_userpass: pass
+wp_installation_dir: '/var/www/wordpress'
+port_wordpress: 9090

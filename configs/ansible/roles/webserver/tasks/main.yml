@@ -1,0 +1,14 @@
+---
+- name: 'Instala pacotes de dependencia do PHP+Apache'
+  apt:
+    update_cache: yes
+    cache_valid_time: 7200 #2 hours
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  loop:
+    - php7.2
+    - apache2
+    - libapache2-mod-php7.2
+    - php7.2-gd
+    - php7.2-mysql

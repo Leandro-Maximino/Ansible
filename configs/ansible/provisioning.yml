@@ -39,11 +39,12 @@
         - 'localhost'
         - '127.0.0.1'
         - '192.168.0.21'  
+        - '0.0.0.0'
       become: yes
 
     - name: 'Copiando arquivo mysqld.cnf'
       copy:
-        src: /vagrant/configs/mysqld.cnf
+        src: /vagrant/configs/mysql/mysqld.cnf
         dest: /etc/mysql/mysql.conf.d/mysqld.cnf
         owner: root
         group: root
@@ -110,8 +111,14 @@
 
     - name: 'Configura apache para servir wordpress'
       copy:
-        src: /vagrant/configs/000-default.conf
+        src: /vagrant/configs/wordpress/000-default.conf
         dest: /etc/apache2/sites-available/000-default.conf
+      become: yes
+
+    - name: 'Configura porta do apache para servir wordpress'
+      copy:
+        src: /vagrant/configs/wordpress/ports.conf
+        dest: /etc/apache2/ports.conf
       become: yes
 
       notify:              

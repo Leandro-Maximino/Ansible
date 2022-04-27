@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   # Máquina Virtual WordPress
   config.vm.define "wordpress" do |wordpress|
     # Network
-    wordpress.vm.network "forwarded_port", guest: 8585, host: 8585
+    wordpress.vm.network "forwarded_port", guest: 9090, host: 9090
     wordpress.vm.network "public_network", ip: "192.168.0.21", bridge: "Intel(R) Dual Band Wireless-AC 8265"
                           
 
@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "mysql" do |mysql|
     # Network
-    # mysql.vm.network "forwarded_port", guest: 8989, host: 8989
+    mysql.vm.network "forwarded_port", guest: 3306, host: 9091
     mysql.vm.network "public_network", ip: "192.168.0.22", bridge: "Intel(R) Dual Band Wireless-AC 8265"
 
     # Provider
